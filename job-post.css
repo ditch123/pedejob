@@ -62,6 +62,8 @@
     justify-content: space-between;
     padding: 0 var(--spacing-lg);
     z-index: 100;
+    -webkit-box-shadow: 0px 8px 20px 5px rgba(0, 0, 0, 0.71);
+    box-shadow: 0px 4px 10px 2.5px rgba(0,0,0,0.71);
   }
 
   .nav .logo {
