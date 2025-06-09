@@ -63,8 +63,8 @@
       justify-content: space-between;
       padding: 0 var(--spacing-lg);
       z-index: 100;
-      -webkit-box-shadow: 0px 8px 20px 5px rgba(0, 0, 0, 0.71);
-      box-shadow: 0px 4px 10px 2.5px rgba(0,0,0,0.71);
+      -webkit-box-shadow: 0px 4px 10px 2.5px rgba(5, 5, 5, 0.518);
+      box-shadow: 0px 2px 5px 2.5px rgba(5, 5, 5, 0.518);
     }
 
     .nav .logo {
@@ -155,7 +155,7 @@
     label {
       font-weight: 300;
       margin-bottom: 0.5rem;
-      color: var(--color-text-heading);
+      color: #1e252a;
       font-size: 1rem;
     }
 
