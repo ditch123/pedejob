@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Job Post Dashboard - PwdJob</title>
+ <link rel="stylesheet" href="job-post.css" />
+
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Primary Navigation">
+    <div class="logo" aria-label="PwdJob Logo">
+      <img src="logo/5.png" alt="PwdJob Logo" />
+      <span style="display:none;">PwdJob</span>
+    </div>
+    <div class="nav-links">
+        <a href="#" tabindex="0">Home</a>
+        <a href="#" tabindex="0">Jobs</a>
+        <a href="#" tabindex="0">Notification</a>
+        <a href="#" tabindex="0">Applicants</a>
+        <a href="#" tabindex="0">Account</a>
+    </div>
+  </nav>
+
+  <main class="container" role="main" aria-label="Job Post Dashboard">
+    <section class="hero-section" aria-labelledby="dashboardTitle">
+      <h1 id="dashboardTitle">Your Job Posts</h1>
+      <p>Manage your active job postings, see metrics, and track applicants.</p>
+      <button class="btn-primary" id="btnCreatePost" aria-label="Create a new job post">Create New Job Post</button>
+    </section>
+
+    <section class="dashboard-grid" aria-label="Metrics and job posts">
+      <div class="card" aria-live="polite" aria-atomic="true">
+        <h2>Total Active Jobs</h2>
+        <div class="metric" id="totalJobs">0</div>
+      </div>
+
+      <div class="card" aria-live="polite" aria-atomic="true">
+        <h2>Total Applicants</h2>
+        <div class="metric" id="totalApplicants">0</div>
+      </div>
+
+      <div class="card" style="grid-column: 1/-1;">
+        <h2>Job Postings</h2>
+        <ul class="job-list" id="jobList" tabindex="0" aria-label="List of job postings">
+          <!-- Jobs will be listed here dynamically -->
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      // Simulated data for demo; in real app, load from backend or localStorage
+      let jobPosts = [
+        {
+          id: 1,
+          title: "Senior Software Engineer",
+          company: "Acme Corp",
+          location: "New York, NY",
+          applicants: 42,
+          jobType: "Full-time",
+          deadline: "2024-07-31",
+        },
+        {
+          id: 2,
+          title: "Marketing Specialist",
+          company: "Beta Ltd",
+          location: "Remote",
+          applicants: 15,
+          jobType: "Part-time",
+          deadline: "2024-08-15",
+        },
+      ];
+
+      const totalJobsEl = document.getElementById('totalJobs');
+      const totalApplicantsEl = document.getElementById('totalApplicants');
+      const jobListEl = document.getElementById('jobList');
+      const btnCreatePost = document.getElementById('btnCreatePost');
+
+      // Format a date in YYYY-MM-DD to something readable
+      function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        const date = new Date(dateString);
+        if (isNaN(date)) return "N/A";
+        return date.toLocaleDateString(undefined, options);
+      }
+
+      function renderJobs() {
+        jobListEl.innerHTML = '';
+        if (jobPosts.length === 0) {
+          const li = document.createElement('li');
+          li.textContent = "No job postings found.";
+          li.style.color = 'var(--color-text)';
+          li.style.fontStyle = 'italic';
+          jobListEl.appendChild(li);
+          totalJobsEl.textContent = '0';
+          totalApplicantsEl.textContent = '0';
+          return;
+        }
+        let applicantsCount = 0;
+        jobPosts.forEach(job => {
+          applicantsCount += job.applicants;
+          const li = document.createElement('li');
+          li.tabIndex = 0;
+          li.setAttribute('role', 'listitem');
+          li.className = 'job-item';
+
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'job-info';
+
+          const titleEl = document.createElement('h3');
+          titleEl.textContent = job.title;
+          titleEl.className = 'job-title';
+          infoDiv.appendChild(titleEl);
+
+          const companyEl = document.createElement('p');
+          companyEl.textContent = job.company + " • " + job.location;
+          companyEl.className = 'job-company';
+          infoDiv.appendChild(companyEl);
+
+          const metaEl = document.createElement('p');
+          metaEl.className = 'job-meta';
+          metaEl.textContent = `${job.jobType} • Applicants: ${job.applicants} • Deadline: ${formatDate(job.deadline)}`;
+          infoDiv.appendChild(metaEl);
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.setAttribute('aria-label', `Delete job post: ${job.title}`);
+          deleteBtn.title = 'Delete job post';
+          deleteBtn.innerHTML = '&times;';
+          deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(confirm(`Are you sure you want to delete the job post "${job.title}"?`)) {
+              jobPosts = jobPosts.filter(j => j.id !== job.id);
+              renderJobs();
+            }
+          });
+
+          li.appendChild(infoDiv);
+          li.appendChild(deleteBtn);
+
+          jobListEl.appendChild(li);
+        });
+        totalJobsEl.textContent = jobPosts.length.toString();
+        totalApplicantsEl.textContent = applicantsCount.toString();
+      }
+
+      btnCreatePost.addEventListener('click', () => {
+        alert('Redirect or open the "Create Job Post" page/form.');
+        // You could in a real app redirect or open a modal here
+      });
+
+      // Initial render
+      renderJobs();
+    })();
+  </script>
+</body>
+</html>
+

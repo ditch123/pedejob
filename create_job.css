@@ -3,7 +3,7 @@
 
     :root {
       --color-bg: #3d9c9c;
-      --color-text: #d0f4f4;
+      --color-text: #ffffff;
       --color-text-heading: #445d5d;
       --color-primary: #1c6262; /* black for buttons */
       --color-primary-hover: #445d5d;
@@ -84,6 +84,7 @@
     .nav .nav-links {
       display: flex;
       gap: var(--spacing-lg);
+      text-shadow: 1px 2px 2px #1e252a;
       font-weight: 350;
       font-size: 1rem;
       color: var(--color-text);
