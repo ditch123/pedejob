@@ -46,8 +46,8 @@ a {
 
 button {
 	border-radius: 20px;
-	border: 1px solid #196262;
-	background-color: #196262;
+	border: 1px solid #3d9c9c;
+	background-color: #3d9c9c;
 	color: #FFFFFF;
 	font-size: 12px;
 	font-weight: bold;
@@ -160,9 +160,9 @@ input {
 }
 
 .overlay {
-	background:   #196262;
-	background: -webkit-linear-gradient(to bottom, #196262, #BDE8CA);
-	background: linear-gradient(to bottom, #196262);
+	background:   #3d9c9c;
+	background: -webkit-linear-gradient(to bottom, #3d9c9c, #BDE8CA);
+	background: linear-gradient(to bottom, #3d9c9c);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: 0 0;
@@ -227,15 +227,16 @@ input {
 }
 
 footer {
-    background: -webkit-linear-gradient(to bottom, #196262, #062d2d);
-	background: linear-gradient(to bottom, #196262, #062d2d);
-    color: #000;
-    font-size: 14px;
+    /* background: -webkit-linear-gradient(to bottom, #3d9c9c, #b5e9e9);
+	background: linear-gradient(to bottom, #3d9c9c, #b5e9e9); */
+	background-color: #3d9c9c;
     bottom: 0;
     position: fixed;
+	height: 100px;
     left: 0;
     right: 0;
-    text-align: center;
+	display: flex;
+	justify-content: center;
     z-index: 999;
 }
 
@@ -244,10 +245,17 @@ footer p {
 }
 
 footer i {
-    color: #062d2d;
+    color: #b5e9e9;
 }
 
 footer a {
     color: #3c97bf;
     text-decoration: none;
+}
+.logo{
+    height: 100px; 
+    width: 90px;
+    display: flex;
+    border-color: #ffffff;
+    
 }

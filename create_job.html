@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PwdJob</title>
+  <link rel="stylesheet" href="create_job.css" />
+  
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Primary Navigation">
+    <div class="logo" aria-label="PwdJob Logo">
+      <img src="logo/6.png" alt="PwdJob Logo" />
+      <span style="display:none;">PwdJob</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" tabindex="0">Home</a>
+      <a href="#" tabindex="0">Jobs</a>
+      <a href="#" tabindex="0">Notification</a>
+      <a href="#" tabindex="0">Applicants</a>
+      <a href="#" tabindex="0">Account</a>
+    </div>
+  </nav>
+
+  <main class="container" role="main">
+    <section class="header-section" aria-labelledby="createjobtitle">
+      <h1 id="createjobtitle">Create a Job Post</h1>
+      <p>Reach millions of professionals with </p>
+    </section>
+
+    <form class="create-job" id="jobPostForm" novalidate>
+      <div class="form-group">
+        <label for="jobTitle">Job Title</label>
+        <input
+          type="text"
+          id="jobTitle"
+          name="jobTitle"
+          placeholder="e.g. Senior Software Engineer"
+          required
+          minlength="3"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="companyName">Company Name</label>
+          <input
+            type="text"
+            id="companyName"
+            name="companyName"
+            placeholder="e.g. Acme Corp"
+            required
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            placeholder="e.g. New York, NY or Remote"
+            required
+            autocomplete="off"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label id="jobTypeLabel">Job Type</label>
+        <div
+          class="job-type-group"
+          role="group"
+          aria-label="Job type selection"
+          aria-labelledby="jobTypeLabel"
+        >
+          <button
+            type="button"
+            class="job-type-option"
+            data-value="Full-time"
+            aria-pressed="false"
+          >
+            Full-time
+          </button>
+          <button
+            type="button"
+            class="job-type-option"
+            data-value="Part-time"
+            aria-pressed="false"
+          >
+            Part-time
+          </button>
+          <button
+            type="button"
+            class="job-type-option"
+            data-value="Contract"
+            aria-pressed="false"
+          >
+            Contract
+          </button>
+          <button
+            type="button"
+            class="job-type-option"
+            data-value="Internship"
+            aria-pressed="false"
+          >
+            Internship
+          </button>
+        </div>
+        <input type="hidden" id="jobType" name="jobType" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="industry">Industry</label>
+          <select id="industry" name="industry" required>
+            <option value="" disabled selected>Select Industry</option>
+            <option value="Technology">Technology</option>
+            <option value="Finance">Finance</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Education">Education</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Sales">Sales</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="experienceLevel">Experience Level</label>
+          <select id="experienceLevel" name="experienceLevel" required>
+            <option value="" disabled selected>Select Experience Level</option>
+            <option value="Entry Level">Entry Level</option>
+            <option value="Associate">Associate</option>
+            <option value="Mid-Senior Level">Mid-Senior Level</option>
+            <option value="Director">Director</option>
+            <option value="Executive">Executive</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="jobDescription">Job Description</label>
+        <textarea
+          id="jobDescription"
+          name="jobDescription"
+          placeholder="Write a detailed description of the role, responsibilities, and qualifications."
+          required
+          minlength="30"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="skillsInput">Skills</label>
+        <div
+          class="skills-input-wrapper"
+          id="skillsInputWrapper"
+          tabindex="0"
+          aria-describedby="skillsHelp"
+          role="list"
+        >
+          <input
+            type="text"
+            id="skillsInput"
+            name="skillsInput"
+            placeholder="Add a skill and press Enter"
+            aria-label="Add skill"
+            autocomplete="off"
+          />
+        </div>
+        <small
+          id="skillsHelp"
+          style="color: var(--color-text); font-size: 0.875rem;"
+          >Press Enter to add multiple skills</small
+        >
+        <input type="hidden" id="skills" name="skills" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="salaryMin">Salary Range</label>
+          <div class="salary-range">
+            <input
+              type="number"
+              id="salaryMin"
+              name="salaryMin"
+              placeholder="Min"
+              min="0"
+              aria-label="Minimum Salary"
+            />
+            <input
+              type="number"
+              id="salaryMax"
+              name="salaryMax"
+              placeholder="Max"
+              min="0"
+              aria-label="Maximum Salary"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="applicationDeadline">Application Deadline</label>
+          <input
+            type="date"
+            id="applicationDeadline"
+            name="applicationDeadline"
+            required
+            aria-describedby="appDeadlineHelp"
+          />
+          <small
+            id="appDeadlineHelp"
+            style="color: var(--color-text); font-size: 0.875rem;"
+          >
+            Deadline to receive applications
+          </small>
+        </div>
+      </div>
+
+      <button type="submit" aria-label="Post job">Post Job</button>
+    </form>
+  </main>
+
+  <script>
+    (function () {
+      const jobTypeGroup = document.querySelector('.job-type-group');
+      const jobTypeInput = document.getElementById('jobType');
+      const buttons = jobTypeGroup.querySelectorAll('.job-type-option');
+
+      // Single select toggle for job type
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          buttons.forEach((b) => {
+            b.classList.remove('selected');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          btn.classList.add('selected');
+          btn.setAttribute('aria-pressed', 'true');
+          jobTypeInput.value = btn.dataset.value;
+          jobTypeInput.dispatchEvent(new Event('input'));
+        });
+      });
+
+      // Skills tag input logic
+      const skillsWrapper = document.getElementById('skillsInputWrapper');
+      const skillsInput = document.getElementById('skillsInput');
+      const skillsHiddenInput = document.getElementById('skills');
+      let skills = [];
+
+      function renderSkills() {
+        skillsWrapper.querySelectorAll('.skills-tag').forEach((e) => e.remove());
+        skills.forEach((skill, index) => {
+          const tag = document.createElement('span');
+          tag.className = 'skills-tag';
+          tag.setAttribute('role', 'listitem');
+          tag.textContent = skill;
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.setAttribute('aria-label', `Remove skill ${skill}`);
+          removeBtn.textContent = '×';
+          removeBtn.addEventListener('click', () => {
+            skills.splice(index, 1);
+            updateSkills();
+            renderSkills();
+          });
+          tag.appendChild(removeBtn);
+          skillsWrapper.insertBefore(tag, skillsInput);
+        });
+        skillsHiddenInput.value = skills.join(',');
+      }
+
+      function updateSkills() {
+        skillsHiddenInput.value = skills.join(',');
+        // Mark skills hidden input validity custom for required
+        if (skills.length === 0) {
+          skillsHiddenInput.setCustomValidity('Please add at least one skill.');
+        } else {
+          skillsHiddenInput.setCustomValidity('');
+        }
+      }
+
+      skillsInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && skillsInput.value.trim() !== '') {
+          e.preventDefault();
+          const skillToAdd = skillsInput.value.trim();
+          if (!skills.includes(skillToAdd)) {
+            skills.push(skillToAdd);
+            updateSkills();
+            renderSkills();
+          }
+          skillsInput.value = '';
+        }
+        if (e.key === 'Backspace' && skillsInput.value === '' && skills.length > 0) {
+          skills.pop();
+          updateSkills();
+          renderSkills();
+        }
+      });
+
+      // Clicking on the wrapper focuses the input
+      skillsWrapper.addEventListener('click', () => {
+        skillsInput.focus();
+      });
+
+      // Form validation and submission simulation
+      const form = document.getElementById('jobPostForm');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
+        // Gather form data
+        const data = {
+          jobTitle: form.jobTitle.value.trim(),
+          companyName: form.companyName.value.trim(),
+          location: form.location.value.trim(),
+          jobType: form.jobType.value,
+          industry: form.industry.value,
+          experienceLevel: form.experienceLevel.value,
+          jobDescription: form.jobDescription.value.trim(),
+          skills: skills,
+          salaryMin: form.salaryMin.value ? Number(form.salaryMin.value) : null,
+          salaryMax: form.salaryMax.value ? Number(form.salaryMax.value) : null,
+          applicationDeadline: form.applicationDeadline.value,
+        };
+
+        alert('Job posted successfully! \n\n' + JSON.stringify(data, null, 2));
+        form.reset();
+        // Reset job type and skills
+        buttons.forEach((b) => b.classList.remove('selected'));
+        buttons.forEach((b) => b.setAttribute('aria-pressed', 'false'));
+        jobTypeInput.value = '';
+        skills = [];
+        renderSkills();
+      });
+    })();
+  </script>
+</body>
+</html>
+
