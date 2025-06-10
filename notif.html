@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notification Dashboard - PwdJob</title>
+  <link rel="stylesheet" href="notif.css" />
+  
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Primary Navigation">
+    <div class="logo" aria-label="PwdJob Logo">
+      <img src="logo/5.png" alt="PwdJob Logo" />
+      <span style="display:none;">PwdJob</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" tabindex="0">Dashboard</a>
+      <a href="#" tabindex="0">Post a Job</a>
+      <a href="#" tabindex="0" aria-current="page">Notifications</a>
+      <a href="#" tabindex="0">Account</a>
+    </div>
+  </nav>
+
+  <main class="container" role="main" aria-label="Notification Dashboard">
+    <header class="page-header">
+      <h1>Notifications & Messages</h1>
+      <p>Stay updated with your latest alerts and messages.</p>
+    </header>
+
+    <section class="sections-grid" aria-label="Notifications and Messages sections">
+      <article class="card" aria-label="Notifications">
+        <h2>Notifications</h2>
+        <div class="list-scroll" id="notificationsList" tabindex="0" aria-live="polite" aria-relevant="additions removals" role="list">
+          <p class="empty-state" id="emptyNotifications">No new notifications.</p>
+        </div>
+      </article>
+
+      <article class="card" aria-label="Messages">
+        <h2>Messages</h2>
+        <div class="list-scroll" id="messagesList" tabindex="0" aria-live="polite" aria-relevant="additions removals" role="list">
+          <p class="empty-state" id="emptyMessages">No new messages.</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Conversation Modal -->
+  <div class="modal-overlay" id="conversationModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <div class="modal" role="document">
+      <header class="modal-header">
+        <h3 id="modalTitle">Conversation</h3>
+        <button class="modal-close-btn" id="closeModalBtn" aria-label="Close conversation dialog">&times;</button>
+      </header>
+      <div class="modal-messages" id="modalMessages" tabindex="0" aria-live="polite" aria-relevant="additions"></div>
+      <form id="modalInputForm" class="modal-input-row" aria-label="Send message form">
+        <input type="text" id="messageInput" placeholder="Type a message..." aria-label="Type your message" required autocomplete="off"/>
+        <button type="submit" aria-label="Send message">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification Viewing Modal -->
+  <div class="modal-notif-overlay" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notifModalTitle" tabindex="-1">
+    <div class="modal-notif" role="document">
+      <header class="modal-notif-header">
+        <span id="notifModalTitle">Notification Details</span>
+        <button class="modal-notif-close-btn" id="closeNotifModalBtn" aria-label="Close notification dialog">&times;</button>
+      </header>
+      <div class="modal-notif-list" id="modalNotificationContent" tabindex="0" aria-live="polite" aria-relevant="additions"></div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toastNotification" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <script>
+    (() => {
+      const notifications = [
+        {
+          id: 1,
+          title: "Job Application Received",
+          message: "Your job posting for Senior Software Engineer has a new applicant.",
+          time: "2 hours ago"
+        },
+        {
+          id: 2,
+          title: "New Job Posted",
+          message: "You just posted a new job: Marketing Specialist.",
+          time: "1 day ago"
+        },
+        {
+          id: 3,
+          title: "Profile Update Reminder",
+          message: "Don't forget to update your company profile to attract more applicants.",
+          time: "3 days ago"
+        }
+      ];
+
+      const messages = [
+        {
+          id: 1,
+          sender: "John Doe",
+          messageList: [
+            { text: "Hi, I am interested in the Senior Software Engineer position. Can we schedule a call?", sent: false, time: "1 hour ago" },
+            { text: "Sure, please let me know your availability.", sent: true, time: "50 minutes ago" },
+          ],
+          latestTime: "1 hour ago"
+        },
+        {
+          id: 2,
+          sender: "Mary Smith",
+          messageList: [
+            { text: "Thank you for the opportunity to apply to the Marketing Specialist role.", sent: false, time: "4 hours ago"},
+            { text: "You're welcome! We'll review your application soon.", sent: true, time: "3 hours 30 minutes ago"},
+          ],
+          latestTime: "4 hours ago"
+        }
+      ];
+
+      const notificationsList = document.getElementById('notificationsList');
+      const messagesList = document.getElementById('messagesList');
+      const emptyNotifications = document.getElementById('emptyNotifications');
+      const emptyMessages = document.getElementById('emptyMessages');
+
+      const conversationModal = document.getElementById('conversationModal');
+      const modalMessages = document.getElementById('modalMessages');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const modalInputForm = document.getElementById('modalInputForm');
+      const messageInput = document.getElementById('messageInput');
+
+      const notificationModal = document.getElementById('notificationModal');
+      const modalNotificationContent = document.getElementById('modalNotificationContent');
+      const closeNotifModalBtn = document.getElementById('closeNotifModalBtn');
+
+      const toastNotification = document.getElementById('toastNotification');
+      let toastTimeout;
+
+      function createItem(item, type) {
+        const container = document.createElement('div');
+        container.className = type === 'notification' ? 'notification-item' : 'message-item';
+        container.tabIndex = 0;
+        container.setAttribute('role', 'listitem');
+
+        const icon = document.createElement('div');
+        icon.className = 'icon-circle';
+        icon.textContent = type === 'notification' ? 'N' : 'M';
+
+        const content = document.createElement('div');
+        content.className = 'item-content';
+
+        const title = document.createElement('h3');
+        title.className = 'item-title';
+        title.textContent = type === 'notification' ? item.title : item.sender;
+
+        const message = document.createElement('p');
+        message.className = 'item-message';
+        message.textContent = type === 'notification' ? item.message : item.messageList[item.messageList.length - 1].text;
+
+        const time = document.createElement('p');
+        time.className = 'item-time';
+        time.textContent = type === 'notification' ? item.time : item.latestTime;
+
+        content.appendChild(title);
+        content.appendChild(message);
+        content.appendChild(time);
+
+        container.appendChild(icon);
+        container.appendChild(content);
+
+        if(type === 'message') {
+          container.addEventListener('click', () => openConversation(item));
+          container.setAttribute('aria-label', `Open conversation with ${item.sender}`);
+        }
+        else if(type === 'notification') {
+          container.addEventListener('click', () => openNotification(item));
+          container.setAttribute('aria-label', `View notification titled ${item.title}`);
+        }
+
+        return container;
+      }
+
+      function renderList(list, container, emptyElement, type) {
+        container.innerHTML = '';
+        if (!list.length) {
+          if (emptyElement) {
+            container.appendChild(emptyElement);
+          }
+          return;
+        }
+        list.forEach(item => {
+          container.appendChild(createItem(item, type));
+        });
+      }
+
+      function renderAll() {
+        renderList(notifications, notificationsList, null, 'notification');
+        renderList(messages, messagesList, null, 'message');
+      }
+
+      function showToast(message) {
+        if(toastTimeout) clearTimeout(toastTimeout);
+        toastNotification.textContent = message;
+        toastNotification.classList.add('show');
+        toastTimeout = setTimeout(() => {
+          toastNotification.classList.remove('show');
+        }, 3000);
+      }
+
+      // Conversation modal logic
+      let currentConversation = null;
+
+      function openConversation(messageThread) {
+        currentConversation = messageThread;
+        document.getElementById('modalTitle').textContent = `Chat with ${messageThread.sender}`;
+        renderConversationMessages();
+        conversationModal.classList.add('active');
+        conversationModal.focus();
+      }
+
+      function closeConversation() {
+        conversationModal.classList.remove('active');
+        currentConversation = null;
+        messageInput.value = '';
+      }
+
+      function renderConversationMessages() {
+        modalMessages.innerHTML = '';
+        if(!currentConversation || !currentConversation.messageList.length) {
+          const p = document.createElement('p');
+          p.textContent = "No messages yet.";
+          p.className = 'empty-state';
+          modalMessages.appendChild(p);
+          return;
+        }
+        currentConversation.messageList.forEach(msg => {
+          const bubble = document.createElement('div');
+          bubble.className = 'bubble ' + (msg.sent ? 'sent' : 'received');
+          bubble.textContent = msg.text;
+          modalMessages.appendChild(bubble);
+        });
+        modalMessages.scrollTop = modalMessages.scrollHeight;
+      }
+
+      modalInputForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const text = messageInput.value.trim();
+        if(text && currentConversation) {
+          currentConversation.messageList.push({text, sent: true, time: 'Just now'});
+          currentConversation.latestTime = 'Just now';
+          renderConversationMessages();
+          messageInput.value = '';
+          showToast(`Message sent to ${currentConversation.sender}`);
+          renderAll();
+        }
+      });
+
+      closeModalBtn.addEventListener('click', closeConversation);
+      conversationModal.addEventListener('click', e => {
+        if (e.target === conversationModal) closeConversation();
+      });
+      document.addEventListener('keydown', e => {
+        if(e.key === 'Escape' && conversationModal.classList.contains('active')){
+          closeConversation();
+        }
+      });
+
+      // Notification modal logic
+      function openNotification(notification) {
+        modalNotificationContent.innerHTML = '';
+        const title = document.createElement('h3');
+        title.className = 'modal-notif-item-title';
+        title.textContent = notification.title;
+
+        const message = document.createElement('p');
+        message.className = 'modal-notif-item-message';
+        message.textContent = notification.message;
+
+        const time = document.createElement('p');
+        time.className = 'modal-notif-item-time';
+        time.textContent = notification.time;
+
+        modalNotificationContent.appendChild(title);
+        modalNotificationContent.appendChild(message);
+        modalNotificationContent.appendChild(time);
+
+        notificationModal.classList.add('active');
+        notificationModal.focus();
+      }
+
+      function closeNotificationModal() {
+        notificationModal.classList.remove('active');
+      }
+
+      closeNotifModalBtn.addEventListener('click', closeNotificationModal);
+      notificationModal.addEventListener('click', e => {
+        if (e.target === notificationModal) closeNotificationModal();
+      });
+      document.addEventListener('keydown', e => {
+        if(e.key === 'Escape' && notificationModal.classList.contains('active')){
+          closeNotificationModal();
+        }
+      });
+
+      renderAll();
+    })();
+  </script>
+</body>
+</html>
+
