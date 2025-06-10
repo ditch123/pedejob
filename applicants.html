@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Applicants Dashboard - PwdJob</title>
+  <link rel="stylesheet" href="applicants.css"/>
+  
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Primary Navigation">
+    <div class="logo" aria-label="PwdJob Logo">
+      <img src="logo/5.png" alt="PwdJob Logo" />
+      <span style="display:none;">PwdJob</span>
+    </div>
+    <div class="nav-links">
+        <a href="#" tabindex="0">Home</a>
+        <a href="#" tabindex="0">Jobs</a>
+        <a href="#" tabindex="0">Notification</a>
+
+      <a href="#" tabindex="0" aria-current="page">Applicants</a>
+      <a href="#" tabindex="0">Account</a>
+    </div>
+  </nav>
+
+  <main class="container" role="main" aria-label="Applicants Dashboard">
+    <header class="page-header">
+      <h1>Applicants Dashboard</h1>
+      <p>Manage applicants, application progress, and communicate directly.</p>
+    </header>
+
+    <div class="controls">
+      <button id="showApplicantsBtn" aria-pressed="true" aria-label="Show active applicants">Active Applicants</button>
+      <button id="showRejectedBtn" aria-pressed="false" aria-label="Show rejected applicants">Rejected Applicants</button>
+    </div>
+
+    <section id="activeApplicantsSection" class="applicants-list">
+      <div class="card" aria-label="Active Applicants List">
+        <h2>Active Applicants</h2>
+        <div id="activeApplicantsContainer" role="list" tabindex="0"></div>
+      </div>
+    </section>
+
+    <section id="rejectedApplicantsSection" class="rejected-list" hidden>
+      <div class="card" aria-label="Rejected Applicants List">
+        <h2>Rejected Applicants</h2>
+        <div id="rejectedApplicantsContainer" role="list" tabindex="0"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Conversation Modal -->
+  <div class="modal-overlay" id="conversationModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <div class="modal" role="document">
+      <header class="modal-header">
+        <h3 id="modalTitle">Conversation</h3>
+        <button class="modal-close-btn" id="closeModalBtn" aria-label="Close conversation dialog">&times;</button>
+      </header>
+      <div class="modal-messages" id="modalMessages" tabindex="0" aria-live="polite" aria-relevant="additions"></div>
+      <form id="modalInputForm" class="modal-input-row" aria-label="Send message form">
+        <input type="text" id="messageInput" placeholder="Type a message..." aria-label="Type your message" required autocomplete="off" />
+        <button type="submit" aria-label="Send message">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toastNotification" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <script>
+    (() => {
+      // Sample active applicants with info, progress, accepted = false by default
+      let applicants = [
+        {
+          id: 1,
+          name: "Alice Johnson",
+          info: "5 years experience, proficient in JavaScript, React.",
+          job: "Senior Software Engineer",
+          progress: 75,
+          accepted: false,
+          messages: [
+            { text: "Hi Alice, we'd like to schedule an interview.", sent: true },
+            { text: "Thank you, happy to chat!", sent: false }
+          ]
+        },
+        {
+          id: 2,
+          name: "Bob Smith",
+          info: "3 years in marketing, skilled in digital campaigns.",
+          job: "Marketing Specialist",
+          progress: 50,
+          accepted: false,
+          messages: []
+        },
+        {
+          id: 3,
+          name: "Carol Lee",
+          info: "UX/UI designer with strong portfolio.",
+          job: "Product Designer",
+          progress: 100,
+          accepted: true,
+          messages: [
+            { text: "Welcome Carol! Looking forward to working with you.", sent: true }
+          ]
+        }
+      ];
+
+      let rejectedApplicants = [];
+
+      const activeSection = document.getElementById('activeApplicantsSection');
+      const rejectedSection = document.getElementById('rejectedApplicantsSection');
+      const activeContainer = document.getElementById('activeApplicantsContainer');
+      const rejectedContainer = document.getElementById('rejectedApplicantsContainer');
+      const showApplicantsBtn = document.getElementById('showApplicantsBtn');
+      const showRejectedBtn = document.getElementById('showRejectedBtn');
+
+      const conversationModal = document.getElementById('conversationModal');
+      const modalMessages = document.getElementById('modalMessages');
+      const modalTitle = document.getElementById('modalTitle');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const modalInputForm = document.getElementById('modalInputForm');
+      const messageInput = document.getElementById('messageInput');
+
+      const toastNotification = document.getElementById('toastNotification');
+      let toastTimeout;
+
+      let currentConversationApplicant = null;
+
+      function showToast(message) {
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastNotification.textContent = message;
+        toastNotification.classList.add('show');
+        toastTimeout = setTimeout(() => {
+          toastNotification.classList.remove('show');
+        }, 3000);
+      }
+
+      function renderProgressBar(progress) {
+        return `<div class="progress-bar-container" aria-label="Application progress: ${progress}%">
+          <div class="progress-bar-fill" style="width: ${progress}%; background-color: var(--button-bg-check); height: 10px; border-radius: var(--border-radius);"></div>
+        </div>`;
+      }
+
+      function createApplicantCard(applicant, isRejected = false) {
+        const card = document.createElement('div');
+        card.className = 'applicant-card';
+        card.setAttribute('role', 'listitem');
+        card.tabIndex = 0;
+
+        const header = document.createElement('div');
+        header.className = 'applicant-header';
+
+        const nameEl = document.createElement('h3');
+        nameEl.className = 'applicant-name';
+        nameEl.textContent = applicant.name;
+
+        const jobEl = document.createElement('p');
+        jobEl.className = 'applicant-job';
+        jobEl.textContent = `Applying for: ${applicant.job}`;
+
+        header.appendChild(nameEl);
+        header.appendChild(jobEl);
+
+        card.appendChild(header);
+
+        const infoEl = document.createElement('p');
+        infoEl.className = 'applicant-info';
+        infoEl.textContent = applicant.info;
+        card.appendChild(infoEl);
+
+        const progressDiv = document.createElement('div');
+        progressDiv.innerHTML = renderProgressBar(applicant.progress);
+        card.appendChild(progressDiv);
+
+        const controls = document.createElement('div');
+        controls.className = 'applicant-controls';
+
+        if (!isRejected) {
+          if (!applicant.accepted) {
+            const checkBtn = document.createElement('button');
+            checkBtn.className = 'action-btn check-btn';
+            checkBtn.setAttribute('aria-label', `Accept applicant ${applicant.name}`);
+            checkBtn.innerHTML = '✔️';
+            checkBtn.title = 'Accept Applicant';
+            checkBtn.addEventListener('click', e => {
+              e.stopPropagation();
+              applicant.accepted = true;
+              renderApplicants();
+              showToast(`${applicant.name} accepted as a candidate.`);
+            });
+            controls.appendChild(checkBtn);
+          }
+
+          const crossBtn = document.createElement('button');
+          crossBtn.className = 'action-btn cross-btn';
+          crossBtn.setAttribute('aria-label', `Reject applicant ${applicant.name}`);
+          crossBtn.innerHTML = '✖️';
+          crossBtn.title = 'Reject Applicant';
+          crossBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            applicants = applicants.filter(a => a.id !== applicant.id);
+            rejectedApplicants.push({ ...applicant, accepted: false });
+            renderApplicants();
+            showToast(`${applicant.name} has been rejected.`);
+          });
+          controls.appendChild(crossBtn);
+        } else {
+          const putBackBtn = document.createElement('button');
+          putBackBtn.className = 'action-btn check-btn';
+          putBackBtn.setAttribute('aria-label', `Reconsider applicant ${applicant.name}`);
+          putBackBtn.innerHTML = '↩';
+          putBackBtn.title = 'Put back as Applicant';
+          putBackBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            rejectedApplicants = rejectedApplicants.filter(a => a.id !== applicant.id);
+            applicants.push({ ...applicant, accepted: false });
+            renderApplicants();
+            showToast(`${applicant.name} moved back to applicants.`);
+          });
+          controls.appendChild(putBackBtn);
+        }
+
+        if (applicant.accepted) {
+          const msgBtn = document.createElement('button');
+          msgBtn.className = 'action-btn msg-btn';
+          msgBtn.setAttribute('aria-label', `Message applicant ${applicant.name}`);
+          msgBtn.textContent = 'Message';
+          msgBtn.title = `Message ${applicant.name}`;
+          msgBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            openConversation(applicant);
+          });
+          controls.appendChild(msgBtn);
+        }
+
+        card.appendChild(controls);
+
+        return card;
+      }
+
+      function renderApplicants() {
+        activeContainer.innerHTML = '';
+        rejectedContainer.innerHTML = '';
+
+        if (applicants.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'empty-state';
+          p.textContent = 'No active applicants.';
+          activeContainer.appendChild(p);
+        } else {
+          applicants.forEach(applicant => {
+            const card = createApplicantCard(applicant);
+            activeContainer.appendChild(card);
+          });
+        }
+
+        if (rejectedApplicants.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'empty-state';
+          p.textContent = 'No rejected applicants.';
+          rejectedContainer.appendChild(p);
+        } else {
+          rejectedApplicants.forEach(applicant => {
+            const card = createApplicantCard(applicant, true);
+            rejectedContainer.appendChild(card);
+          });
+        }
+      }
+
+      // Conversation modal logic
+      function openConversation(applicant) {
+        currentConversationApplicant = applicant;
+        modalTitle.textContent = `Chat with ${applicant.name}`;
+        renderConversationMessages();
+        conversationModal.classList.add('active');
+        conversationModal.focus();
+      }
+
+      function closeConversation() {
+        conversationModal.classList.remove('active');
+        currentConversationApplicant = null;
+        messageInput.value = '';
+      }
+
+      function renderConversationMessages() {
+        modalMessages.innerHTML = '';
+        if (!currentConversationApplicant || !currentConversationApplicant.messages.length) {
+          const p = document.createElement('p');
+          p.textContent = "No messages yet.";
+          p.className = 'empty-state';
+          modalMessages.appendChild(p);
+          return;
+        }
+        currentConversationApplicant.messages.forEach(msg => {
+          const bubble = document.createElement('div');
+          bubble.className = 'bubble ' + (msg.sent ? 'sent' : 'received');
+          bubble.textContent = msg.text;
+          modalMessages.appendChild(bubble);
+        });
+        modalMessages.scrollTop = modalMessages.scrollHeight;
+      }
+
+      modalInputForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const text = messageInput.value.trim();
+        if(text && currentConversationApplicant){
+          currentConversationApplicant.messages.push({text, sent: true});
+          renderConversationMessages();
+          messageInput.value = '';
+          showToast(`Message sent to ${currentConversationApplicant.name}`);
+          renderApplicants();
+        }
+      });
+
+      closeModalBtn.addEventListener('click', closeConversation);
+      conversationModal.addEventListener('click', e => {
+        if (e.target === conversationModal) closeConversation();
+      });
+      document.addEventListener('keydown', e => {
+        if(e.key === 'Escape' && conversationModal.classList.contains('active')){
+          closeConversation();
+        }
+      });
+
+      showApplicantsBtn.addEventListener('click', () => {
+        activeSection.hidden = false;
+        rejectedSection.hidden = true;
+        showApplicantsBtn.setAttribute('aria-pressed', 'true');
+        showRejectedBtn.setAttribute('aria-pressed', 'false');
+      });
+      showRejectedBtn.addEventListener('click', () => {
+        activeSection.hidden = true;
+        rejectedSection.hidden = false;
+        showRejectedBtn.setAttribute('aria-pressed', 'true');
+        showApplicantsBtn.setAttribute('aria-pressed', 'false');
+      });
+
+      const activeSection = document.getElementById('activeApplicantsSection');
+      const rejectedSection = document.getElementById('rejectedApplicantsSection');
+
+      renderApplicants();
+    })();
+  </script>
+</body>
+</html>
+
