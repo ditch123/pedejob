@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap');
 
 :root {
     --color-bg: #3d9c9c;
@@ -47,58 +48,59 @@ body {
   }
 
  /* Sticky nav */
- .nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  background-color: var(--color-bg);
-  box-shadow: 0 2px 8px var(--color-shadow-light);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--spacing-lg);
-  z-index: 100;
-  -webkit-box-shadow: 0px 4px 10px 2.5px rgba(5, 5, 5, 0.518);
-  box-shadow: 0px 2px 5px 2.5px rgba(5, 5, 5, 0.518);
-}
+     .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background-color: var(--color-bg);
+      box-shadow: 0 2px 8px var(--color-shadow-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-lg);
+      z-index: 100;
+      -webkit-box-shadow: 0px 4px 10px 2.5px rgba(5, 5, 5, 0.518);
+      box-shadow: 0px 2px 5px 2.5px rgba(5, 5, 5, 0.518);
+    }
+  
+    .nav .logo {
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--color-primary);
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+  
+    .nav .logo img {
+      height: 90px;
+      width: 85px;
+      object-fit: contain;
+    }
+  
+    .nav .nav-links {
+      display: flex;
+      gap: var(--spacing-lg);
+      text-shadow: 1px 2px 2px #1e252a;
+      font-weight: 350;
+      font-size: 1rem;
+      color:#ffff;
+    }
+  
+    .nav .nav-links a {
+      position: relative;
+      padding: 0.25rem 0;
+      transition: color 0.3s ease;
+    }
+  
+    .nav .nav-links a:hover,
+    .nav .nav-links a:focus {
+      color: #1c6262;
+    }
 
-.nav .logo {
-  font-weight: 800;
-  font-size: 1.5rem;
-  color: var(--color-primary);
-  user-select: none;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-
-.nav .logo img {
-  height: 90px;
-  width: 85px;
-  object-fit: contain;
-}
-
-.nav .nav-links {
-  display: flex;
-  gap: var(--spacing-lg);
-  text-shadow: 1px 2px 2px #1e252a;
-  font-weight: 350;
-  font-size: 1rem;
-  color:#ffff;
-}
-
-.nav .nav-links a {
-  position: relative;
-  padding: 0.25rem 0;
-  transition: color 0.3s ease;
-}
-
-.nav .nav-links a:hover,
-.nav .nav-links a:focus {
-  color: #1c6262;
-}
 
 main.container {
   max-width: var(--max-width-container);

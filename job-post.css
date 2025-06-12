@@ -4,7 +4,7 @@
     :root {
         --color-bg: #3d9c9c;
         --color-text: #ffffff;
-        --color-text-heading: #445d5d;
+        --color-text-heading: #354646;
         -color-primary: #1c6262; /* black for buttons */
         --color-primary-hover: #5c8686;
         --color-border: #d1d5db; /* tailwind gray-300 */

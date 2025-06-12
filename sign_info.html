@@ -1,13 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="sign_info.css" />
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up Dashboard - PwdJob</title>
+  <link rel="stylesheet" href="sign_info.css" />
 </head>
 <body>
-    
+  <div class="container">
+    <div class="logo" aria-label="PwdJob Logo">
+        <img src="logo/pwd.png" alt="PwdJob Logo" />
+        <span style="display:none;">PwdJob</span>
+      </div>
+    <h1>Sign Up Your Company</h1>
+    <form id="signupForm">
+      <label for="companyName">Company/Business Name <span style="color: red;">*</span></label>
+      <input type="text" id="companyName" required placeholder="Enter your company name" />
+
+      <label for="companyType">Company Type <span style="color: red;">*</span></label>
+      <select id="companyType" required>
+        <option value="" disabled selected>Select company type</option>
+        <option value="small">Small Business (less than 200 employees)</option>
+        <option value="medium_large">Medium to Large Company (more than 200 employees)</option>
+      </select>
+
+      <label for="websiteUrl">Website URL</label>
+      <input type="url" id="websiteUrl" placeholder="https://yourcompany.com" />
+
+      <!-- <label for="companySize">Company Size <span style="color: red;">*</span></label>
+      <select id="companySize" required>
+        <option value="" disabled selected>Select size range</option>
+        <option value="1-10">1–10</option>
+        <option value="11-50">11–50</option>
+        <option value="51-200">51–200</option>
+        <option value="201-500">201–500</option>
+        <option value="501-1000">501–1000</option>
+        <option value="1001+">1001+</option>
+      </select> -->
+
+      <label for="companyTypeDetail">Company Type <span style="color: red;">*</span></label>
+      <select id="companyTypeDetail" required>
+        <option value="" disabled selected>Select company type</option>
+        <option value="private">Private</option>
+        <option value="public">Public</option>
+        <option value="nonprofit">Nonprofit</option>
+        <option value="self-employed">Self-employed</option>
+        <option value="educational">Educational Institution</option>
+        <option value="government">Government Agency</option>
+      </select>
+
+      <label for="industry">Industry <span style="color: red;">*</span></label>
+      <input type="text" id="industry" required placeholder="e.g., IT, Education, Retail" />
+
+      <label for="companyLogo">Company Logo <span style="color: red;">*</span></label>
+      <input type="file" id="companyLogo" accept="image/*" required />
+
+      <label for="companyDescription">Company Description <span style="color: red;">*</span></label>
+      <textarea id="companyDescription" required placeholder="A short summary about your company..." rows="4"></textarea>
+
+      <label for="companyLocation">Company Location <span style="color: red;">*</span></label>
+      <input type="text" id="companyLocation" required placeholder="Country, City, Street Address, Postal Code" />
+
+      <label for="adminLinkedIn">Admin's Account <span style="color: red;">*</span></label>
+      <input type="text" id="adminLinkedIn" required placeholder="Your profile URL" />
+
+      <!-- <h3>Optional Details for Recruitment</h3> -->
+      <label for="hashtags">Hashtag Tags</label>
+      <input type="text" id="hashtags" placeholder="e.g., #hiring, #tech, #diversity" />
+
+      <!-- <label for="customLinkedInUrl">Custom LinkedIn URL</label>
+      <input type="text" id="customLinkedInUrl" placeholder="e.g., linkedin.com/company/yourbusiness" /> -->
+
+      <label for="coverPhoto">Cover Photo</label>
+      <input type="file" id="coverPhoto" accept="image/*" />
+
+      <!-- <label for="jobPosts">Job Posts or Open Roles</label>
+      <input type="text" id="jobPosts" placeholder="Add job opportunities after page creation" /> -->
+
+      <label for="diversityInfo">Diversity and Inclusion Information</label>
+      <textarea id="diversityInfo" placeholder="Information about diversity and inclusion..." rows="2"></textarea>
+
+      <button type="submit">Create Company Profile</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      alert('Company profile created successfully!');
+      // Here you can add logic to send the form data to your server
+    });
+  </script>
 </body>
 </html>
