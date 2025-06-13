@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Applicants Dashboard - PwdJob</title>
-  <link rel="stylesheet" href="applicants.css"/>
-  
+  <link rel="stylesheet" href="messages.css"/>
+
 </head>
 <body>
   <nav class="nav" role="navigation" aria-label="Primary Navigation">
@@ -28,22 +28,29 @@
       <p>Manage applicants, application progress, and communicate directly.</p>
     </header>
 
-    <div class="controls">
-      <button id="showApplicantsBtn" aria-pressed="true" aria-label="Show active applicants">Active Applicants</button>
-      <button id="showRejectedBtn" aria-pressed="false" aria-label="Show rejected applicants">Rejected Applicants</button>
+    <div class="controls" role="tablist" aria-label="Applicant status filters">
+      <button id="showApprovedBtn" aria-pressed="false" aria-selected="false" role="tab" aria-controls="approvedApplicantsSection" tabindex="-1">Approved Applicants</button>
+      <button id="showRejectedBtn" aria-pressed="false" aria-selected="false" role="tab" aria-controls="rejectedApplicantsSection" tabindex="-1">Rejected Applicants</button>
     </div>
 
-    <section id="activeApplicantsSection" class="applicants-list">
-      <div class="card" aria-label="Active Applicants List">
+    <section id="activeApplicantsSection" class="applicants-list" role="tabpanel" tabindex="0" aria-label="Active Applicants List">
+      <div class="card">
         <h2>Active Applicants</h2>
-        <div id="activeApplicantsContainer" role="list" tabindex="0"></div>
+        <div id="activeApplicantsContainer" role="list"></div>
       </div>
     </section>
 
-    <section id="rejectedApplicantsSection" class="rejected-list" hidden>
-      <div class="card" aria-label="Rejected Applicants List">
+    <section id="approvedApplicantsSection" class="approved-list" role="tabpanel" tabindex="0" aria-label="Approved Applicants List" hidden>
+      <div class="card">
+        <h2>Approved Applicants</h2>
+        <div id="approvedApplicantsContainer" role="list"></div>
+      </div>
+    </section>
+
+    <section id="rejectedApplicantsSection" class="rejected-list" role="tabpanel" tabindex="0" aria-label="Rejected Applicants List" hidden>
+      <div class="card">
         <h2>Rejected Applicants</h2>
-        <div id="rejectedApplicantsContainer" role="list" tabindex="0"></div>
+        <div id="rejectedApplicantsContainer" role="list"></div>
       </div>
     </section>
   </main>
@@ -67,7 +74,7 @@
 
   <script>
     (() => {
-      // Sample active applicants with info, progress, accepted = false by default
+      // Sample applicants data
       let applicants = [
         {
           id: 1,
@@ -76,10 +83,7 @@
           job: "Senior Software Engineer",
           progress: 75,
           accepted: false,
-          messages: [
-            { text: "Hi Alice, we'd like to schedule an interview.", sent: true },
-            { text: "Thank you, happy to chat!", sent: false }
-          ]
+          messages: []
         },
         {
           id: 2,
@@ -97,19 +101,22 @@
           job: "Product Designer",
           progress: 100,
           accepted: true,
-          messages: [
-            { text: "Welcome Carol! Looking forward to working with you.", sent: true }
-          ]
+          messages: []
         }
       ];
 
       let rejectedApplicants = [];
 
       const activeSection = document.getElementById('activeApplicantsSection');
+      const approvedSection = document.getElementById('approvedApplicantsSection');
       const rejectedSection = document.getElementById('rejectedApplicantsSection');
+
       const activeContainer = document.getElementById('activeApplicantsContainer');
+      const approvedContainer = document.getElementById('approvedApplicantsContainer');
       const rejectedContainer = document.getElementById('rejectedApplicantsContainer');
+
       const showApplicantsBtn = document.getElementById('showApplicantsBtn');
+      const showApprovedBtn = document.getElementById('showApprovedBtn');
       const showRejectedBtn = document.getElementById('showRejectedBtn');
 
       const conversationModal = document.getElementById('conversationModal');
@@ -127,15 +134,17 @@
       function showToast(message) {
         if (toastTimeout) clearTimeout(toastTimeout);
         toastNotification.textContent = message;
-        toastNotification.classList.add('show');
+        toastNotification.style.opacity = '1';
+        toastNotification.style.pointerEvents = 'auto';
         toastTimeout = setTimeout(() => {
-          toastNotification.classList.remove('show');
+          toastNotification.style.opacity = '0';
+          toastNotification.style.pointerEvents = 'none';
         }, 3000);
       }
 
       function renderProgressBar(progress) {
         return `<div class="progress-bar-container" aria-label="Application progress: ${progress}%">
-          <div class="progress-bar-fill" style="width: ${progress}%; background-color: var(--button-bg-check); height: 10px; border-radius: var(--border-radius);"></div>
+          <div class="progress-bar-fill" style="width: ${progress}%;"></div>
         </div>`;
       }
 
@@ -185,6 +194,7 @@
               applicant.accepted = true;
               renderApplicants();
               showToast(`${applicant.name} accepted as a candidate.`);
+              openConversation(applicant); // Open conversation immediately after accepting
             });
             controls.appendChild(checkBtn);
           }
@@ -203,19 +213,21 @@
           });
           controls.appendChild(crossBtn);
         } else {
-          const putBackBtn = document.createElement('button');
-          putBackBtn.className = 'action-btn check-btn';
-          putBackBtn.setAttribute('aria-label', `Reconsider applicant ${applicant.name}`);
-          putBackBtn.innerHTML = '↩';
-          putBackBtn.title = 'Put back as Applicant';
-          putBackBtn.addEventListener('click', e => {
+          // Accepted applicant shown in approved section: no accept/reject buttons
+          // Add option to move back to active applicants (unapprove)
+          const undoApproveBtn = document.createElement('button');
+          undoApproveBtn.className = 'action-btn cross-btn';
+          undoApproveBtn.setAttribute('aria-label', `Move applicant ${applicant.name} back to active`);
+          undoApproveBtn.innerHTML = '↩';
+          undoApproveBtn.title = 'Move back to Active Applicants';
+          undoApproveBtn.addEventListener('click', e => {
             e.stopPropagation();
-            rejectedApplicants = rejectedApplicants.filter(a => a.id !== applicant.id);
-            applicants.push({ ...applicant, accepted: false });
+            applicants = applicants.filter(a => a.id !== applicant.id); // Remove from approved list
+            applicants.push({ ...applicant, accepted: false }); // Add back to active list
             renderApplicants();
-            showToast(`${applicant.name} moved back to applicants.`);
+            showToast(`${applicant.name} moved back to active applicants.`);
           });
-          controls.appendChild(putBackBtn);
+          controls.appendChild(undoApproveBtn);
         }
 
         if (applicant.accepted) {
@@ -238,17 +250,33 @@
 
       function renderApplicants() {
         activeContainer.innerHTML = '';
+        approvedContainer.innerHTML = '';
         rejectedContainer.innerHTML = '';
 
-        if (applicants.length === 0) {
+        const activeApplicants = applicants.filter(a => !a.accepted);
+        const approvedApplicants = applicants.filter(a => a.accepted);
+
+        if (activeApplicants.length === 0) {
           const p = document.createElement('p');
           p.className = 'empty-state';
           p.textContent = 'No active applicants.';
           activeContainer.appendChild(p);
         } else {
-          applicants.forEach(applicant => {
+          activeApplicants.forEach(applicant => {
             const card = createApplicantCard(applicant);
             activeContainer.appendChild(card);
+          });
+        }
+
+        if (approvedApplicants.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'empty-state';
+          p.textContent = 'No approved applicants.';
+          approvedContainer.appendChild(p);
+        } else {
+          approvedApplicants.forEach(applicant => {
+            const card = createApplicantCard(applicant);
+            approvedContainer.appendChild(card);
           });
         }
 
@@ -320,22 +348,43 @@
         }
       });
 
-      showApplicantsBtn.addEventListener('click', () => {
-        activeSection.hidden = false;
-        rejectedSection.hidden = true;
-        showApplicantsBtn.setAttribute('aria-pressed', 'true');
-        showRejectedBtn.setAttribute('aria-pressed', 'false');
+      // Handle tab toggling for sections
+      function activateTab(button, section) {
+        // Deactivate all buttons and sections
+        [showApplicantsBtn, showApprovedBtn, showRejectedBtn].forEach(btn => {
+          btn.setAttribute('aria-pressed', 'false');
+          btn.setAttribute('aria-selected', 'false');
+          btn.tabIndex = -1;
+        });
+        [activeSection, approvedSection, rejectedSection].forEach(sec => {
+          sec.hidden = true;
+          sec.setAttribute('aria-hidden', 'true');
+          sec.tabIndex = -1;
+        });
+
+        // Activate the selected button and section
+        button.setAttribute('aria-pressed', 'true');
+        button.setAttribute('aria-selected', 'true');
+        button.tabIndex = 0;
+        section.hidden = false;
+        section.setAttribute('aria-hidden', 'false');
+        section.tabIndex = 0;
+        section.focus();
+      }
+
+    //   showApplicantsBtn.addEventListener('click', () => {
+    //     activateTab(showApplicantsBtn, activeSection);
+    //   });
+      showApprovedBtn.addEventListener('click', () => {
+        activateTab(showApprovedBtn, approvedSection);
       });
       showRejectedBtn.addEventListener('click', () => {
-        activeSection.hidden = true;
-        rejectedSection.hidden = false;
-        showRejectedBtn.setAttribute('aria-pressed', 'true');
-        showApplicantsBtn.setAttribute('aria-pressed', 'false');
+        activateTab(showRejectedBtn, rejectedSection);
       });
 
-
-
+      // Initial render and tab activation
       renderApplicants();
+      activateTab(showApplicantsBtn, activeSection);
     })();
   </script>
 </body>
