@@ -342,4 +342,18 @@
         grid-template-columns: 1fr;
       }
     }
- 
+      .notiff{
+        background: 'var(--color-bg)';
+        border-radius: var(--border-radius);
+        width: 100%;
+        max-width: 480px;
+        max-height: 80vh;
+        box-shadow: var(--card-shadow);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 1rem;
+        color: var(--color-text);
+        text-align: center;
+        margin: '1rem auto';
+      }

@@ -14,18 +14,22 @@
       </div>
     <h1>Sign Up Your Company</h1>
     <form id="signupForm">
-      <label for="companyName">Company/Business Name <span style="color: red;">*</span></label>
-      <input type="text" id="companyName" required placeholder="Enter your company name" />
+      <label for="company_name">Company/Business Name <span style="color: red;">*</span></label>
+      <input type="text" id="company_name" required placeholder="Enter your company name" />
 
-      <label for="companyType">Company Type <span style="color: red;">*</span></label>
-      <select id="companyType" required>
+      <label for="company_level">Company Level <span style="color: red;">*</span></label>
+      <select id="company_level" required>
         <option value="" disabled selected>Select company type</option>
         <option value="small">Small Business (less than 200 employees)</option>
         <option value="medium_large">Medium to Large Company (more than 200 employees)</option>
       </select>
 
-      <label for="websiteUrl">Website URL</label>
-      <input type="url" id="websiteUrl" placeholder="https://yourcompany.com" />
+
+      <label for="email">Email</label>
+      <input type="url" id="email" placeholder="yourcompany@gmail.com" />
+
+      <label for="website_url">Website URL</label>
+      <input type="url" id="website_url" placeholder="https://yourcompany.com" />
 
       <!-- <label for="companySize">Company Size <span style="color: red;">*</span></label>
       <select id="companySize" required>
@@ -38,8 +42,8 @@
         <option value="1001+">1001+</option>
       </select> -->
 
-      <label for="companyTypeDetail">Company Type <span style="color: red;">*</span></label>
-      <select id="companyTypeDetail" required>
+      <label for="company_type">Company Type <span style="color: red;">*</span></label>
+      <select id="company_type" required>
         <option value="" disabled selected>Select company type</option>
         <option value="private">Private</option>
         <option value="public">Public</option>
@@ -52,33 +56,36 @@
       <label for="industry">Industry <span style="color: red;">*</span></label>
       <input type="text" id="industry" required placeholder="e.g., IT, Education, Retail" />
 
-      <label for="companyLogo">Company Logo <span style="color: red;">*</span></label>
-      <input type="file" id="companyLogo" accept="image/*" required />
+      <label for="file">Company Logo <span style="color: red;">*</span></label>
+      <input type="file" id="file" accept="image/*" required />
 
-      <label for="companyDescription">Company Description <span style="color: red;">*</span></label>
-      <textarea id="companyDescription" required placeholder="A short summary about your company..." rows="4"></textarea>
+      <label for="description">Company Description <span style="color: red;">*</span></label>
+      <textarea id="description" required placeholder="A short summary about your company..." rows="4"></textarea>
 
-      <label for="companyLocation">Company Location <span style="color: red;">*</span></label>
-      <input type="text" id="companyLocation" required placeholder="Country, City, Street Address, Postal Code" />
+      <label for="location">Company Location <span style="color: red;">*</span></label>
+      <input type="text" id="location" required placeholder="Country, City, Street Address, Postal Code" />
 
-      <label for="adminLinkedIn">Admin's Account <span style="color: red;">*</span></label>
-      <input type="text" id="adminLinkedIn" required placeholder="Your profile URL" />
+      <label for="admin_name">Admin's Name <span style="color: red;">*</span></label>
+      <input type="text" id="admin_name" required placeholder="Your profile URL" />
 
       <!-- <h3>Optional Details for Recruitment</h3> -->
-      <label for="hashtags">Hashtag Tags</label>
-      <input type="text" id="hashtags" placeholder="e.g., #hiring, #tech, #diversity" />
+      <label for="tags">Hashtag Tags</label>
+      <input type="text" id="tags" placeholder="e.g., #hiring, #tech, #diversity" />
 
       <!-- <label for="customLinkedInUrl">Custom LinkedIn URL</label>
       <input type="text" id="customLinkedInUrl" placeholder="e.g., linkedin.com/company/yourbusiness" /> -->
 
-      <label for="coverPhoto">Cover Photo</label>
-      <input type="file" id="coverPhoto" accept="image/*" />
+      <label for="file">Cover Photo</label>
+      <input type="file" id="file" accept="image/*" />
 
       <!-- <label for="jobPosts">Job Posts or Open Roles</label>
       <input type="text" id="jobPosts" placeholder="Add job opportunities after page creation" /> -->
 
-      <label for="diversityInfo">Diversity and Inclusion Information</label>
-      <textarea id="diversityInfo" placeholder="Information about diversity and inclusion..." rows="2"></textarea>
+      <!-- <label for="diversityInfo">Diversity and Inclusion Information</label>
+      <textarea id="diversityInfo" placeholder="Information about diversity and inclusion..." rows="2"></textarea> -->
+
+      <label for="password">Password</label>
+      <input type="url" id="password" placeholder="Abc123@" />
 
       <button type="submit">Create Company Profile</button>
     </form>

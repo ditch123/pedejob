@@ -14,11 +14,10 @@
       <span style="display:none;">PwdJob</span>
     </div>
     <div class="nav-links">
-        <a href="#" tabindex="0">Home</a>
-        <a href="#" tabindex="0">Jobs</a>
-        <a href="#" tabindex="0">Notification</a>
-        <a href="#" tabindex="0" aria-current="page">Applicants</a>
-        <a href="#" tabindex="0">Account</a>
+      <a href="Main.html" tabindex="0">Home</a>
+      <a href="job-post.html" tabindex="0">Jobs</a>
+      <a href="notif.html" tabindex="0">Notification</a>
+      <a href="applicants.html" tabindex="0" aria-current="page">Applicants</a>
     </div>
   </nav>
 
@@ -187,7 +186,7 @@
             const checkBtn = document.createElement('button');
             checkBtn.className = 'action-btn check-btn';
             checkBtn.setAttribute('aria-label', `Accept applicant ${applicant.name}`);
-            checkBtn.innerHTML = '✔️';
+            checkBtn.innerHTML = 'Accept';
             checkBtn.title = 'Accept Applicant';
             checkBtn.addEventListener('click', e => {
               e.stopPropagation();
@@ -202,7 +201,7 @@
           const crossBtn = document.createElement('button');
           crossBtn.className = 'action-btn cross-btn';
           crossBtn.setAttribute('aria-label', `Reject applicant ${applicant.name}`);
-          crossBtn.innerHTML = '✖️';
+          crossBtn.innerHTML = 'Reject';
           crossBtn.title = 'Reject Applicant';
           crossBtn.addEventListener('click', e => {
             e.stopPropagation();

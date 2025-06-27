@@ -1,0 +1,64 @@
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("jobPostForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Convert string skills into an array (if needed)
+      data.skills = data.skills ? data.skills.split(",") : [];
+
+      // Display the data (you can also send it to an API instead)
+      displaySubmittedData(data);
+
+      // Simulate sending to a server
+      try {
+        const response = await fetch("https://example.com/api/post-job", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          console.log("Job posted successfully.");
+          alert("Job posted!");
+          form.reset();
+        } else {
+          alert("Error posting job.");
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        alert("Network error.");
+      }
+    });
+
+    function displaySubmittedData(data) {
+      let output = `
+        <h2>Job Post Preview</h2>
+        <p><strong>Title:</strong> ${data.jobTitle}</p>
+        <p><strong>Company:</strong> ${data.companyName}</p>
+        <p><strong>Location:</strong> ${data.location}</p>
+        <p><strong>Job Type:</strong> ${data.jobType}</p>
+        <p><strong>Industry:</strong> ${data.industry}</p>
+        <p><strong>Experience Level:</strong> ${data.experienceLevel}</p>
+        <p><strong>Description:</strong> ${data.jobDescription}</p>
+        <p><strong>Skills:</strong> ${data.skills.join(", ")}</p>
+        <p><strong>Salary Range:</strong> ${data.salaryMin || '—'} to ${data.salaryMax || '—'}</p>
+      `;
+
+      const preview = document.getElementById("jobPreview");
+      preview.innerHTML = output;
+      preview.style.display = "block";
+    }
+  });
+</script>

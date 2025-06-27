@@ -6,7 +6,7 @@
         --color-text-heading: #354646;
         --color-primary: #1c6262; /* primary color for buttons */
         --color-primary-hover: #5c8686;
-        --color-border: #d1d5db; /* tailwind gray-300 */
+        --color-border: #d1d5db; 
         --color-shadow-light: rgba(0,0,0,0.05);
         --border-radius: 0.75rem; /* 12px */
         --spacing-xs: 0.5rem;
@@ -285,7 +285,7 @@
     button.msg-btn {
         background-color: var(--button-bg-msg);
         padding: 0.25rem 0.75rem;
-        font-size: 0.85rem;
+        font-size: 1 rem;
         margin-left: auto;
     }
 

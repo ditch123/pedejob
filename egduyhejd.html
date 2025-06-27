@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PwdJob - Job Posts</title>
+    <link rel="stylesheet" href="create_job.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap');
+
+        :root {
+            --color-bg: #3d9c9c;
+            --color-text: #ffffff;
+            --color-text-heading: #354646;
+            --color-primary: #1c6262; /* black for buttons */
+            --color-primary-hover: #5c8686;
+            --color-border: #d1d5db; /* tailwind gray-300 */
+            --color-shadow-light: rgba(0,0,0,0.05);
+            --border-radius: 0.75rem; /* 12px */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 4rem;
+            --max-width-container: 1200px;
+            --font-family: 'Montserrat', sans-serif;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background-color: #e4e9e9;
+            color: var(--color-text);
+            font-family: var(--font-family);
+            font-size: 1rem;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 68px; /* for sticky nav */
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Sticky nav */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background-color: var(--color-bg);
+            box-shadow: 0 2px 8px var(--color-shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-lg);
+            z-index: 100;
+        }
+
+        .nav .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .nav .logo img {
+            height: 90px;
+            width: 85px;
+            object-fit: contain;
+        }
+
+        .nav .nav-links {
+            display: flex;
+            gap: var(--spacing-lg);
+            text-shadow: 1px 2px 2px #1e252a;
+            font-weight: 350;
+            font-size: 1rem;
+            color: var(--color-text);
+        }
+
+        .nav .nav-links a {
+            position: relative;
+            padding: 0.25rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav .nav-links a:hover,
+        .nav .nav-links a:focus {
+            color: #1c6262;
+        }
+
+        /* Job post styles */
+        .job-post {
+            background-color: var(--color-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            color: var(--color-text);
+            width: 100%;
+            max-width: var(--max-width-container);
+        }
+
+        .job-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .job-details {
+            margin-bottom: var(--spacing-md);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" role="navigation" aria-label="Primary Navigation">
+        <div class="logo" aria-label="PwdJob Logo">
+            <img src="logo/5.png" alt="PwdJob Logo" />
+            <span style="display:none;">PwdJob</span>
+        </div>
+        <div class="nav-links">
+            <a href="Main.html" tabindex="0">Home</a>
+            <a href="job-post.html" tabindex="0">Jobs</a>
+            <a href="notif.html" tabindex="0">Notification</a>
+            <a href="messages.html" tabindex="0">Applicants</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1>Job Posts</h1>
+        <div id="jobPostsContainer"></div>
+    </main>
+
+    <script>
+        // Function to display job posts
+        function displayJobPosts() {
+            const jobPosts = JSON.parse(localStorage.getItem('jobPosts')) || [];
+            const jobPostsContainer = document.getElementById('jobPostsContainer');
+
+            if (jobPosts.length === 0) {
+                jobPostsContainer.innerHTML = '<p>No job posts available.</p>';
+                return;
+            }
+
+            jobPosts.forEach(post => {
+                const jobPostDiv = document.createElement('div');
+                jobPostDiv.classList.add('job-post');
+
+                jobPostDiv.innerHTML = `
+                    <div class="job-title">${post.jobTitle}</div>
+                    <div class="job-details">
+                        <strong>Company:</strong> ${post.companyName}<br>
+                        <strong>Location:</strong> ${post.location}<br>
+                        <strong>Industry:</strong> ${post.industry}<br>
+                        <strong>Experience Level:</strong> ${post.experienceLevel}<br>
+                        <strong>Salary:</strong> $${post.salaryMin} - $${post.salaryMax}<br>
+                        <strong>Skills:</strong> ${post.skillsInput}<br>
+                        <strong>Description:</strong> ${post.jobDescription}
+                    </div>
+                `;
+
+                jobPostsContainer.appendChild(jobPostDiv);
+            });
+        }
+
+        // Call the function to display job posts on page load
+        displayJobPosts();
+    </script>
+</body>
+</html>
